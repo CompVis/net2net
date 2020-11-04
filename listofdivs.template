@@ -1,0 +1,118 @@
+<div class="image fit captioned align-just">
+<a href="images/article-Figure1-1.jpg">
+<img src="images/article-Figure1-1.jpg" alt="" />
+</a>
+Figure 1: BERT [15] to BigGAN [4] transfer: Our approach enables translation between fixed off-the-shelve expert models such as BERT and BigGAN without having to modify or finetune them.
+</div>
+==========
+<div class="image fit captioned align-just">
+<a href="images/article-Figure2-1.jpg">
+<img src="images/article-Figure2-1.jpg" alt="" />
+</a>
+Figure 2: Proposed architecture. We provide post-hoc model fusion for two given deep networks f = Φ ◦Ψ and g = Θ ◦ Λ which live on arbitrary domains Dx and Dy . For deep representations zΦ = Φ(x) and zΘ = Θ(y), a conditional INN τ learns to transfer between them by modelling the ambiguities w.r.t. the translation as an explicit residual, enabling transfer between given off-the-shelf models and their respective domains.
+</div>
+==========
+<div class="image fit captioned align-just">
+<a href="images/article-Figure3-1.jpg">
+<img src="images/article-Figure3-1.jpg" alt="" />
+</a>
+Figure 3: Different Image-to-Image translation tasks solved with a single AE g and different experts f .
+</div>
+==========
+<div class="image fit captioned align-just">
+<a href="images/article-Figure4-1.jpg">
+<img src="images/article-Figure4-1.jpg" alt="" />
+</a>
+Figure 4: Superresolution with Network-to-Network Translation. Here, we use our cINN to combine two autoencoders f and g to generatively combine two autoencoders living on image scales 32× 32 and 256× 256.
+</div>
+==========
+<div class="image fit captioned align-just">
+<a href="images/article-Figure5-1.jpg">
+<img src="images/article-Figure5-1.jpg" alt="" />
+</a>
+Figure 5: Translating different layers of an expert model f to the representation of an autoencoder g reveals the learned invariances of f and thus provides diagnostic insights. Here, f is a segmentation model, while g is the same AE as in Sec. 4.2. For zΦ = Φ(x), obtained from different layers of f , we sample zΘ as in Eq. (7) and synthesize corresponding images Λ(zΘ).
+</div>
+==========
+<div class="image fit captioned align-just">
+<a href="images/article-Figure6-1.jpg">
+<img src="images/article-Figure6-1.jpg" alt="" />
+</a>
+Figure 6: We directly consider attribute vectors for zΦ to perform attribute modifications. We show both qualitative comparisons to [8], obtained by changing a single attribute of the input, as well as quantiative comparisons of FID scores, obtained after flipping a single attribute for all images of the test set. The results demonstrate the value of reusing a powerful, generic autoencoder (AE) g and repurposing it via our approach for a specific task, such as attribute modification, instead of learning an AE and the modification task simultaneously.
+</div>
+==========
+<div class="image fit captioned align-just">
+<a href="images/article-Figure7-1.jpg">
+<img src="images/article-Figure7-1.jpg" alt="" />
+</a>
+Figure 7: In (a), a segmentation representation Φ(x) is translated under the guidance of the residual v = τ−1(Θ(y)|Φ(y)) obtained from exemplar y. In (b), Φ is the same as Θ, but applied after a spatial deformation of its input such that τ learns to extract a shape representation into v, which then controls the target shape.
+</div>
+==========
+<div class="image fit captioned align-just">
+<a href="images/article-Figure8-1.jpg">
+<img src="images/article-Figure8-1.jpg" alt="" />
+</a>
+Figure 8: Unpaired Transfer: Bringing oil portraits and animes to live by projecting them onto the FFHQ dataset (column 1 and 2, respectively). Column 3 visualizes the more subtle differences introduced when translating between different datasets of human faces such as FFHQ and CelebA-HQ. Column 4 shows a translation between the more diverse modalities of human and animal faces. See also Sec. 4.3 and D.
+</div>
+==========
+<div class="image fit captioned align-just">
+<a href="images/article-Table2-1.jpg">
+<img src="images/article-Table2-1.jpg" alt="" />
+</a>
+Table 2: Comparison of computational costs for a single training run of different models. Energy consumption of a Titan X is based on the recommended system power (0.6 kW) by NVIDIA5, and energy consumption of eight V100 on the power (3.5 kW) of a NVIDIA DGX-1 system6. Costs are based on the average price of 0.216 EUR per kWh in the EU7, and CO2 emissions on the average emissions of 0.296 kg CO2 per kWh in the EU8.
+</div>
+==========
+<div class="image fit captioned align-just">
+<a href="images/article-Figure9-1.jpg">
+<img src="images/article-Figure9-1.jpg" alt="" />
+</a>
+Figure 9: Unsupervised disentangling of shape and appearance. Training our approach on synthetically deformed images, τ learns to extract a disentangled shape representation v from y, which can be recombined with arbitrary appearances obtained from x. See also Sec. C.
+</div>
+==========
+<div class="image fit captioned align-just">
+<a href="images/article-Figure10-1.jpg">
+<img src="images/article-Figure10-1.jpg" alt="" />
+</a>
+Figure 10: Additional examples for unpaired translation between human and animal faces as in Fig. 8. Our approach naturally provides translations in both directions (see Sec. D). Inputs are randomly choosen test examples from either the human or the animal data and translated to the respective other one.
+</div>
+==========
+<div class="image fit captioned align-just">
+<a href="images/article-Figure11-1.jpg">
+<img src="images/article-Figure11-1.jpg" alt="" />
+</a>
+Figure 11: Additional examples for unpaired translation of Oil Portraits to FFHQ/CelebA-HQ and Anime to FFHQ/CelebA-HQ. Here, we show samples where the same v is projected onto the respective dataset.
+</div>
+==========
+<div class="image fit captioned align-just">
+<a href="images/article-Figure12-1.jpg">
+<img src="images/article-Figure12-1.jpg" alt="" />
+</a>
+Figure 12: Model diagnosis compared to a MLP for the translation. Synthesized samples and FID scores demonstrate that a direct translation with a multilayer perceptron (MLP) does not capture the ambiguities of the translation process and can thus only produce a mean image. In contrast, our cINN correctly captures the variability and produces coherent outputs.
+</div>
+==========
+<div class="image fit captioned align-just">
+<a href="images/article-Figure13-1.jpg">
+<img src="images/article-Figure13-1.jpg" alt="" />
+</a>
+Figure 13: Additional examples for exemplar-guided image-to-image translation as in Fig. 7a.
+</div>
+==========
+<div class="image fit captioned align-just">
+<a href="images/article-Figure14-1.jpg">
+<img src="images/article-Figure14-1.jpg" alt="" />
+</a>
+Figure 14: Additional Landscape samples, obtained by translation of the argmaxed logits (i.e. the segmentation output) of the segmentation model from Sec. 4.2, 4.3 into the space of our autoencoder g, see Sec. 4.2, 4.3. The synthesized examples demonstrate that our approach is able to generate diverse and realistic images from a given label map or through a segmentation model.
+</div>
+==========
+<div class="image fit captioned align-just">
+<a href="images/article-Figure16-1.jpg">
+<img src="images/article-Figure16-1.jpg" alt="" />
+</a>
+Figure 16: BERT [15] to BigGAN [4] transfer: Additional examples, which demonstrate high diversity in synthesized outputs.
+</div>
+==========
+<div class="image fit captioned align-just">
+<a href="paper/slides.pdf">
+<img src="paper/slides.jpg" alt="" />
+</a>
+Slides from our NeurIPS 2020 oral presentation.
+</div>
