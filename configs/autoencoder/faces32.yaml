@@ -1,0 +1,33 @@
+model:
+  base_learning_rate: 4.5e-6
+  target: net2net.models.autoencoder.BasicAE
+  params:
+    ae_config:
+      target: net2net.modules.autoencoder.basic.BasicAEModel
+      params:
+        in_size: 32
+        n_down: 4
+        z_dim: 128
+        in_channels: 3
+        deterministic: False
+
+    loss_config:
+      target: net2net.modules.autoencoder.loss.LPIPSWithDiscriminator
+      params:
+        disc_start: 10001
+        kl_weight: 0.000001
+        disc_weight: 0.5
+
+
+data:
+  target: translation.DataModuleFromConfig
+  params:
+    batch_size: 12
+    train:
+      target: net2net.data.faces.CelebFQTrain
+      params:
+        size: 32
+    validation:
+      target: net2net.data.faces.CelebFQValidation
+      params:
+        size: 32

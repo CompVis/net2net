@@ -1,0 +1,72 @@
+model:
+  base_learning_rate: 4.5e-6
+  target: net2net.models.flows.flow.Net2NetFlow
+  params:
+    first_stage_key: "image"
+    cond_stage_key: "image"
+    interpolate_cond_size: 32
+    flow_config:
+      target: net2net.modules.flow.flatflow.ConditionalFlatCouplingFlow
+      params:
+        conditioning_dim: 128
+        embedding_dim: 128
+        conditioning_depth: 2
+        n_flows: 20
+        in_channels: 128
+        hidden_dim: 1024
+        hidden_depth: 2
+        activation: "none"
+        conditioner_use_bn: True
+
+    cond_stage_config:
+      target: net2net.models.autoencoder.BasicAE
+      params:
+        ckpt_path: "logs/2020-10-16T17-11-42_FacesFQ32x32/checkpoints/last.ckpt"
+        ae_config:
+          target: net2net.modules.autoencoder.basic.BasicAEModel
+          params:
+            in_size: 32
+            n_down: 4
+            z_dim: 128
+            in_channels: 3
+            deterministic: False
+
+        loss_config:
+          target: net2net.modules.autoencoder.loss.DummyLoss  # dummy
+
+    first_stage_config:
+      target: net2net.models.autoencoder.BigAE
+      params:
+        ckpt_path: "logs/2020-09-16T16-23-39_FacesXL256z128/checkpoints/last.ckpt"
+
+        encoder_config:
+          target: net2net.modules.autoencoder.encoder.ResnetEncoder
+          params:
+            in_channels: 3
+            in_size: 256
+            pretrained: false
+            type: resnet101
+            z_dim: 128
+
+        decoder_config:
+          target: net2net.modules.autoencoder.decoder.BigGANDecoderWrapper
+          params:
+            z_dim: 128
+            in_size: 256
+            use_actnorm_in_dec: true
+
+        loss_config:
+          target: net2net.modules.autoencoder.loss.DummyLoss
+
+data:
+  target: translation.DataModuleFromConfig
+  params:
+    batch_size: 6
+    train:
+      target: net2net.data.faces.CelebFQTrain
+      params:
+        size: 256
+    validation:
+      target: net2net.data.faces.CelebFQValidation
+      params:
+        size: 256
