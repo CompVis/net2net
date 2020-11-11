@@ -12,7 +12,7 @@ another's and thereby enables translation between fixed off-the-shelve expert
 models such as BERT and BigGAN without having to modify or finetune them.
 
 ![teaser](assets/teaser.png)
-[BibTeX](#bibtex) | [Project Page](https://compvis.github.io/net2net/)
+[arXiv](https://arxiv.org/abs/2005.13580) | [BibTeX](#bibtex) | [Project Page](https://compvis.github.io/net2net/)
 
 For now, example code for a translation between low-resolution and
 high-resolution autoencoders is provided to obtain a generative superresolution
@@ -125,12 +125,16 @@ for the model on 256 x 256 images. After training, adopt the corresponding model
 To run the training as described above, put them into 
 `logs/2020-10-16T17-11-42_FacesFQ32x32/checkpoints/last.ckpt`and 
 `logs/2020-09-16T16-23-39_FacesXL256z128/checkpoints/last.ckpt`, respectively.
+
 ## BibTeX
 
 ```
-@misc{rombach2020net2net,
+@misc{rombach2020networktonetwork,
       title={Network-to-Network Translation with Conditional Invertible Neural Networks},
       author={Robin Rombach and Patrick Esser and Björn Ommer},
       year={2020},
+      eprint={2005.13580},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV}
 }
 ```
