@@ -114,11 +114,11 @@ and specify any additional training commands as described above. Note that this 
 pretrained autoencoder models, one on 32 x 32 images and the other on 256 x 256. If you want to
 train them yourself on a combination of FFHQ and CelebA-HQ, run
 ```
-python translation.py --base configs/autoencoder/faces32 -t --gpus <n>, 
+python translation.py --base configs/autoencoder/faces32.yaml -t --gpus <n>, 
 ```
 for the 32 x 32 images; and 
 ```
-python translation.py --base configs/autoencoder/faces32 -t --gpus <n>, 
+python translation.py --base configs/autoencoder/faces256.yaml -t --gpus <n>, 
 ```
 for the model on 256 x 256 images. After training, adopt the corresponding model paths in `configs/translation/faces32-to-faces256.yaml`. Additionally, we provide weights of pretrained autoencoders for both settings: 
 [Weights 32x32](https://heibox.uni-heidelberg.de/f/b0b103af8406467abe48/);  [Weights256x256](https://heibox.uni-heidelberg.de/f/64f57a9dcbdc480f9178/). 
