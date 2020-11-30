@@ -6,7 +6,7 @@ from torch.utils.data import Dataset, ConcatDataset
 
 
 class ConcatDatasetWithIndex(ConcatDataset):
-    """Modified from original Pytorch Code to return dataset idx"""
+    """Modified from original pytorch code to return dataset idx"""
     def __getitem__(self, idx):
         if idx < 0:
             if -idx > len(self):
