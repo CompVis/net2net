@@ -28,7 +28,15 @@ conda activate net2net
 ```
 
 ## Datasets
-
+- **CelebA**: Create a symlink 'data/CelebA' pointing to a folder which contains the following files:
+    ```  
+  .
+    ├── identity_CelebA.txt
+    ├── img_align_celeba
+    ├── list_attr_celeba.txt
+    └── list_eval_partition.txt
+  ```
+  These files can be obtained [here](http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html).
 - **CelebA-HQ**: Create a symlink `data/celebahq` pointing to a folder containing
   the `.npy` files of CelebA-HQ (instructions to obtain them can be found in
   the [PGGAN repository](https://github.com/tkarras/progressive_growing_of_gans)).
