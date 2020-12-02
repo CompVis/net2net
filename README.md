@@ -145,7 +145,7 @@ approach to demonstrate biases of datasets and their creative applications.
 More information can be found in our paper [A Note on Data Biases in Generative
 Models](https://drive.google.com/file/d/1PGhBTEAgj2A_FnYMk_1VU-uOxcWY076B/view?usp=sharing) from the [Machine Learning for Creativity and Design](https://neurips2020creativity.github.io/) at [NeurIPS 2020](https://nips.cc/Conferences/2020). Download the models from
 
-- [2020-11-30T23-32-28_celeba_celebahq_ffhq_256](TODO)
+- [2020-11-30T23-32-28_celeba_celebahq_ffhq_256](https://heibox.uni-heidelberg.de/d/c50a84928bec42ca8a50/)
 - [2020-12-02T13-58-19_anime_photography_256](TODO)
 
 and place them into `logs`. Run the demo with
