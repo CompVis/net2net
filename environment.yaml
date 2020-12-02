@@ -18,5 +18,6 @@ dependencies:
     - plotly==4.9.0
     - pytorch-lightning==0.9.0
     - omegaconf==2.0.0
+    - streamlit==0.71.0
     - test-tube>=0.7.5
     - -e .

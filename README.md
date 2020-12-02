@@ -134,6 +134,22 @@ To run the training as described above, put them into
 `logs/2020-10-16T17-11-42_FacesFQ32x32/checkpoints/last.ckpt`and 
 `logs/2020-09-16T16-23-39_FacesXL256z128/checkpoints/last.ckpt`, respectively.
 
+## ML4Creativity Demo
+
+We include a [streamlit](https://www.streamlit.io/) demo, which utilizes our
+approach to demonstrate biases of datasets and their creative applications.
+More information can be found in our paper [A Note on Data Biases in Generative
+Models](https://drive.google.com/file/d/1PGhBTEAgj2A_FnYMk_1VU-uOxcWY076B/view?usp=sharing) from the [Machine Learning for Creativity and Design](https://neurips2020creativity.github.io/) at [NeurIPS 2020](https://nips.cc/Conferences/2020). Download the models from
+
+- [2020-11-30T23-32-28_celeba_celebahq_ffhq_256](TODO)
+- [2020-12-02T13-58-19_anime_photography_256](TODO)
+
+and place them into `logs`. Run the demo with
+
+```
+streamlit run ml4cad.py
+```
+
 ## BibTeX
 
 ```
