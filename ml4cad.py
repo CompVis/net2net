@@ -430,6 +430,7 @@ if __name__ == "__main__":
         path = os.path.join(CKPT_ROOT, "2020-12-02T13-58-19_anime_photography_256")
         ckpt = os.path.join(CKPT_ROOT, "2020-12-02T13-58-19_anime_photography_256/checkpoints/epoch=000004.ckpt")
         label_dict = {0: "Photography", 1: "Anime"}
+        st.sidebar.info("Note that the anime dataset contains mostly female characters.")
     else:
         raise ValueError("Unknown mode {}".format(mode))
 
@@ -449,13 +450,14 @@ if __name__ == "__main__":
     gpu = torch.cuda.is_available()
     eval_mode = True
     show_config = False
-    if st.sidebar.checkbox("More Options"):
-        gpu = st.sidebar.checkbox("GPU", value=gpu)
-        eval_mode = st.sidebar.checkbox("Eval Mode", value=eval_mode)
-        show_config = st.sidebar.checkbox("Show Config", value=show_config)
-        if show_config:
-            st.info("Checkpoint: {}".format(ckpt))
-            st.json(OmegaConf.to_container(config))
+    # KISS
+    #if st.sidebar.checkbox("More Options"):
+    #    gpu = st.sidebar.checkbox("GPU", value=gpu)
+    #    eval_mode = st.sidebar.checkbox("Eval Mode", value=eval_mode)
+    #    show_config = st.sidebar.checkbox("Show Config", value=show_config)
+    #    if show_config:
+    #        st.info("Checkpoint: {}".format(ckpt))
+    #        st.json(OmegaConf.to_container(config))
 
     dset, model, global_step = load_model_and_dset(config, ckpt, gpu, eval_mode)
     if DEBUG:
