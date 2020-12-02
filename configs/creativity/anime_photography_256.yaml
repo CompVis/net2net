@@ -26,7 +26,7 @@ model:
     first_stage_config:
       target: net2net.models.autoencoder.BigAE
       params:
-        ckpt_path: "logs/2020-09-16T16-23-39_FacesXL256z128/checkpoints/last.ckpt"
+        ckpt_path: "logs/2020-09-30T21-40-22_AnimeAndFHQ/checkpoints/epoch=000007.ckpt"
         encoder_config:
           target: net2net.modules.autoencoder.encoder.ResnetEncoder
           params:
@@ -49,12 +49,12 @@ model:
 data:
   target: translation.DataModuleFromConfig
   params:
-    batch_size: 6
+    batch_size: 15
     train:
-      target: net2net.data.faces.CCFQTrain
+      target: net2net.data.faces.FacesHQAndAnimeTrain
       params:
         size: 256
     validation:
-      target: net2net.data.faces.CCFQValidation
+      target: net2net.data.faces.FacesHQAndAnimeValidation
       params:
         size: 256

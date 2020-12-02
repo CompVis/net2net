@@ -345,7 +345,7 @@ class AnimeFacesValidation(FacesBase):
 
 
 class FacesHQAndAnimeTrain(Dataset):
-    # FacesFQ [0] + Anime [1]
+    # (FFHQ+CeleA-HQ) [0] + Anime [1]
     def __init__(self, size):
         super().__init__()
         d1 = ConcatDataset([FFHQTrain(size=size, keys=["image"]), CelebAHQTrain(size=size, keys=["image"])])
@@ -362,7 +362,7 @@ class FacesHQAndAnimeTrain(Dataset):
 
 
 class FacesHQAndAnimeValidation(Dataset):
-    # FacesFQ [0] + Anime [1]
+    # (FFHQ+CeleA-HQ) [0] + Anime [1]
     def __init__(self, size):
         super().__init__()
         d1 = ConcatDataset([FFHQValidation(size=size, keys=["image"]),
@@ -379,8 +379,64 @@ class FacesHQAndAnimeValidation(Dataset):
         return ex
 
 
+class OilPortraitsTrain(FacesBase):
+    def __init__(self, size, keys=None):
+        super().__init__()
+        root = "data/portraits"
+        with open("data/portraitstrain.txt", "r") as f:
+            relpaths = f.read().splitlines()
+        paths = [os.path.join(root, relpath) for relpath in relpaths]
+        self.data = ImagePaths(paths=paths, size=size, random_crop=False)
+        self.keys = keys
+
+
+class OilPortraitsValidation(FacesBase):
+    def __init__(self, size, keys=None):
+        super().__init__()
+        root = "data/portraits"
+        with open("data/portraitsvalidation.txt", "r") as f:
+            relpaths = f.read().splitlines()
+        paths = [os.path.join(root, relpath) for relpath in relpaths]
+        self.data = ImagePaths(paths=paths, size=size, random_crop=False)
+        self.keys = keys
+
+
+class FacesHQAndPortraitsTrain(Dataset):
+    # (FFHQ+CeleA-HQ) [0] + Portraits [1]
+    def __init__(self, size):
+        super().__init__()
+        d1 = ConcatDataset([FFHQTrain(size=size, keys=["image"]), CelebAHQTrain(size=size, keys=["image"])])
+        d2 = OilPortraitsTrain(size=size, keys=["image"])
+        self.data = ConcatDatasetWithIndex([d1, d2])
+
+    def __len__(self):
+        return len(self.data)
+
+    def __getitem__(self, i):
+        ex, y = self.data[i]
+        ex["class"] = y
+        return ex
+
+
+class FacesHQAndPortraitsValidation(Dataset):
+    # (FFHQ+CeleA-HQ) [0] + Portraits [1]
+    def __init__(self, size):
+        super().__init__()
+        d1 = ConcatDataset([FFHQValidation(size=size, keys=["image"]),
+                            CelebAHQValidation(size=size, keys=["image"])])
+        d2 = OilPortraitsValidation(size=size, keys=["image"])
+        self.data = ConcatDatasetWithIndex([d1, d2])
+
+    def __len__(self):
+        return len(self.data)
+
+    def __getitem__(self, i):
+        ex, y = self.data[i]
+        ex["class"] = y
+        return ex
+
+
 if __name__ == "__main__":
-    from pprint import pprint
 
     d = FFHQTrain(size=256)
     print("size FFHQTrain:", len(d))
