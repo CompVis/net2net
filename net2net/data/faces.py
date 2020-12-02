@@ -436,6 +436,39 @@ class FacesHQAndPortraitsValidation(Dataset):
         return ex
 
 
+class FFHQAndPortraitsTrain(Dataset):
+    # FFHQ [0] + Portraits [1]
+    def __init__(self, size):
+        super().__init__()
+        d1 = FFHQTrain(size=size, keys=["image"])
+        d2 = OilPortraitsTrain(size=size, keys=["image"])
+        self.data = ConcatDatasetWithIndex([d1, d2])
+
+    def __len__(self):
+        return len(self.data)
+
+    def __getitem__(self, i):
+        ex, y = self.data[i]
+        ex["class"] = y
+        return ex
+
+
+class FFHQAndPortraitsValidation(Dataset):
+    # FFHQ [0] + Portraits [1]
+    def __init__(self, size):
+        super().__init__()
+        d1 = FFHQValidation(size=size, keys=["image"])
+        d2 = OilPortraitsValidation(size=size, keys=["image"])
+        self.data = ConcatDatasetWithIndex([d1, d2])
+
+    def __len__(self):
+        return len(self.data)
+
+    def __getitem__(self, i):
+        ex, y = self.data[i]
+        ex["class"] = y
+        return ex
+
 if __name__ == "__main__":
 
     d = FFHQTrain(size=256)
