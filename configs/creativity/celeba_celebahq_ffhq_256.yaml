@@ -51,10 +51,10 @@ data:
   params:
     batch_size: 6
     train:
-      target: net2net.data.faces.CCFQTrain
+      target: net2net.data.faces.FacesHQAndAnimeTrain
       params:
         size: 256
     validation:
-      target: net2net.data.faces.CCFQValidation
+      target: net2net.data.faces.FacesHQAndAnimeValidation
       params:
         size: 256

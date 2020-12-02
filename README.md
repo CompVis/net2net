@@ -42,8 +42,12 @@ conda activate net2net
   the [PGGAN repository](https://github.com/tkarras/progressive_growing_of_gans)).
 - **FFHQ**: Create a symlink `data/ffhq` pointing to the `images1024x1024` folder
   obtained from the [FFHQ repository](https://github.com/NVlabs/ffhq-dataset).
-
-
+- **Anime Faces**: First download the face images from the [Anime Crop dataset]() and then apply
+  the preprocessing of [FFHQ](https://github.com/NVlabs/ffhq-dataset) to those images. We only keep images 
+  where the underlying [dlib face recognition model](http://dlib.net/face_landmark_detection.py.html) recognizes 
+  a face. Finally, create a symlink `data/anime` which contains the processed anime face images.
+- **Oil Portraits**: [Download here.](https://heibox.uni-heidelberg.de/f/4f35bdc16eea4158aa47/?dl=1)
+  Unpack the content and place the files in `data/portraits`.
 ## Training
 Our code uses [Pytorch-Lightning](https://www.pytorchlightning.ai/) and thus natively supports
 things like 16-bit precision, multi-GPU training and gradient accumulation. Training details for any model need to be specified in a dedicated `.yaml` file.
