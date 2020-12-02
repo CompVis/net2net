@@ -1,0 +1,60 @@
+model:
+  base_learning_rate: 4.5e-6
+  target: net2net.models.flows.flow.Net2NetFlow
+  params:
+    first_stage_key: "image"
+    cond_stage_key: "class"
+    flow_config:
+      target: net2net.modules.flow.flatflow.ConditionalFlatCouplingFlow
+      params:
+        conditioning_dim: 2
+        embedding_dim: 10
+        conditioning_depth: 2
+        n_flows: 20
+        in_channels: 128
+        hidden_dim: 1024
+        hidden_depth: 2
+        activation: "none"
+        conditioner_use_bn: True
+
+    cond_stage_config:
+      target: net2net.modules.labels.model.Labelator
+      params:
+        num_classes: 2
+        as_one_hot: True
+
+    first_stage_config:
+      target: net2net.models.autoencoder.BigAE
+      params:
+        ckpt_path: "logs/2020-09-29T23-47-10_PortraitsAndFFHQ/checkpoints/epoch=000004.ckpt"
+        encoder_config:
+          target: net2net.modules.autoencoder.encoder.ResnetEncoder
+          params:
+            in_channels: 3
+            in_size: 256
+            pretrained: false
+            type: resnet101
+            z_dim: 128
+
+        decoder_config:
+          target: net2net.modules.autoencoder.decoder.BigGANDecoderWrapper
+          params:
+            z_dim: 128
+            in_size: 256
+            use_actnorm_in_dec: true
+
+        loss_config:
+          target: net2net.modules.autoencoder.loss.DummyLoss
+
+data:
+  target: translation.DataModuleFromConfig
+  params:
+    batch_size: 15
+    train:
+      target: net2net.data.faces.FacesHQAndPortraitsTrain
+      params:
+        size: 256
+    validation:
+      target: net2net.data.faces.FacesHQAndPortraitsValidation
+      params:
+        size: 256
