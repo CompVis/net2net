@@ -420,6 +420,7 @@ if __name__ == "__main__":
 
     mode = st.sidebar.selectbox("Model Edition", ["CelebA - CelebaHQ - FFHQ",
                                                   "Anime - Photography",
+                                                  "Portrait - Photography",
     ])
 
     if mode == "CelebA - CelebaHQ - FFHQ":
@@ -431,6 +432,10 @@ if __name__ == "__main__":
         ckpt = os.path.join(CKPT_ROOT, "2020-12-02T13-58-19_anime_photography_256/checkpoints/epoch=000004.ckpt")
         label_dict = {0: "Photography", 1: "Anime"}
         st.sidebar.info("Note that the anime dataset contains mostly female characters.")
+    elif mode == "Portrait - Photography":
+        path = os.path.join(CKPT_ROOT, "2020-12-02T16-19-39_portraits_photography_256")
+        ckpt = os.path.join(CKPT_ROOT, "2020-12-02T16-19-39_portraits_photography_256/checkpoints/epoch=000003.ckpt")
+        label_dict = {0: "Photography", 1: "Oil Portrait"}
     else:
         raise ValueError("Unknown mode {}".format(mode))
 
