@@ -140,7 +140,7 @@ class Net2NetFlow(pl.LightningModule):
         xshift = self.decode_to_img(zshift)
 
         log["inputs"] = x
-        if self.cond_stage_key not in ["text", "caption"]:
+        if self.cond_stage_key not in ["text", "caption", "class"]:
             log["conditioning"] = xc
         log["reconstructions"] = xrec
         log["shift"] = xshift
@@ -151,6 +151,8 @@ class Net2NetFlow(pl.LightningModule):
         x = batch[key]
         if key in ["caption", "text"]:
             x = list(x[0])
+        elif key in ["class"]:
+            pass
         else:
             if len(x.shape) == 3:
                 x = x[..., None]

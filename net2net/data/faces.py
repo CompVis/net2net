@@ -30,43 +30,47 @@ class FacesBase(Dataset):
 
 
 class CelebAHQTrain(FacesBase):
-    def __init__(self, size):
+    def __init__(self, size, keys=None):
         super().__init__()
         root = "data/celebahq"
         with open("data/celebahqtrain.txt", "r") as f:
             relpaths = f.read().splitlines()
         paths = [os.path.join(root, relpath) for relpath in relpaths]
         self.data = NumpyPaths(paths=paths, size=size, random_crop=False)
+        self.keys = keys
 
 
 class CelebAHQValidation(FacesBase):
-    def __init__(self, size):
+    def __init__(self, size, keys=None):
         super().__init__()
         root = "data/celebahq"
         with open("data/celebahqvalidation.txt", "r") as f:
             relpaths = f.read().splitlines()
         paths = [os.path.join(root, relpath) for relpath in relpaths]
         self.data = NumpyPaths(paths=paths, size=size, random_crop=False)
+        self.keys = keys
 
 
 class FFHQTrain(FacesBase):
-    def __init__(self, size):
+    def __init__(self, size, keys=None):
         super().__init__()
         root = "data/ffhq"
         with open("data/ffhqtrain.txt", "r") as f:
             relpaths = f.read().splitlines()
         paths = [os.path.join(root, relpath) for relpath in relpaths]
         self.data = ImagePaths(paths=paths, size=size, random_crop=False)
+        self.keys = keys
 
 
 class FFHQValidation(FacesBase):
-    def __init__(self, size):
+    def __init__(self, size, keys=None):
         super().__init__()
         root = "data/ffhq"
         with open("data/ffhqvalidation.txt", "r") as f:
             relpaths = f.read().splitlines()
         paths = [os.path.join(root, relpath) for relpath in relpaths]
         self.data = ImagePaths(paths=paths, size=size, random_crop=False)
+        self.keys = keys
 
 
 class CelebABase(Dataset):
@@ -286,9 +290,9 @@ class CelebFQValidation(Dataset):
 class CCFQTrain(Dataset):
     """CelebA, CelebA-HQ and FFHQ"""
     def __init__(self, size):
-        d1 = CelebATrain(size=size)
-        d2 = CelebAHQTrain(size=size)
-        d3 = FFHQTrain(size=size)
+        d1 = CelebATrain(size=size, keys=["image"])
+        d2 = CelebAHQTrain(size=size, keys=["image"])
+        d3 = FFHQTrain(size=size, keys=["image"])
         self.data = ConcatDatasetWithIndex([d1, d2, d3])
 
     def __len__(self):
@@ -303,9 +307,9 @@ class CCFQTrain(Dataset):
 class CCFQValidation(Dataset):
     """CelebA, CelebA-HQ and FFHQ"""
     def __init__(self, size):
-        d1 = CelebAValidation(size=size)
-        d2 = CelebAHQValidation(size=size)
-        d3 = FFHQValidation(size=size)
+        d1 = CelebAValidation(size=size, keys=["image"])
+        d2 = CelebAHQValidation(size=size, keys=["image"])
+        d3 = FFHQValidation(size=size, keys=["image"])
         self.data = ConcatDatasetWithIndex([d1, d2, d3])
 
     def __len__(self):
@@ -315,6 +319,64 @@ class CCFQValidation(Dataset):
         example, y = self.data[i]
         example["class"] = y
         return example
+
+
+class AnimeFacesTrain(FacesBase):
+    """Anime Faces obtained from Gwern's https://www.gwern.net/Crops """
+    def __init__(self, size, keys=None):
+        super().__init__()
+        root = "data/anime"
+        with open("data/animegwerncroptrain.txt", "r") as f:
+            relpaths = f.read().splitlines()
+        paths = [os.path.join(root, relpath) for relpath in relpaths]
+        self.data = ImagePaths(paths=paths, size=size, random_crop=False)
+        self.keys = keys
+
+
+class AnimeFacesValidation(FacesBase):
+    def __init__(self, size, keys=None):
+        super().__init__()
+        root = "data/anime"
+        with open("data/animegwerncropvalidation.txt", "r") as f:
+            relpaths = f.read().splitlines()
+        paths = [os.path.join(root, relpath) for relpath in relpaths]
+        self.data = ImagePaths(paths=paths, size=size, random_crop=False)
+        self.keys = keys
+
+
+class FacesHQAndAnimeTrain(Dataset):
+    # FacesFQ [0] + Anime [1]
+    def __init__(self, size):
+        super().__init__()
+        d1 = ConcatDataset([FFHQTrain(size=size, keys=["image"]), CelebAHQTrain(size=size, keys=["image"])])
+        d2 = AnimeFacesTrain(size=size, keys=["image"])
+        self.data = ConcatDatasetWithIndex([d1, d2])
+
+    def __len__(self):
+        return len(self.data)
+
+    def __getitem__(self, i):
+        ex, y = self.data[i]
+        ex["class"] = y
+        return ex
+
+
+class FacesHQAndAnimeValidation(Dataset):
+    # FacesFQ [0] + Anime [1]
+    def __init__(self, size):
+        super().__init__()
+        d1 = ConcatDataset([FFHQValidation(size=size, keys=["image"]),
+                            CelebAHQValidation(size=size, keys=["image"])])
+        d2 = AnimeFacesValidation(size=size, keys=["image"])
+        self.data = ConcatDatasetWithIndex([d1, d2])
+
+    def __len__(self):
+        return len(self.data)
+
+    def __getitem__(self, i):
+        ex, y = self.data[i]
+        ex["class"] = y
+        return ex
 
 
 if __name__ == "__main__":
