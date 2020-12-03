@@ -34,7 +34,11 @@ class BigAE(pl.LightningModule):
                 if k.startswith(ik):
                     print("Deleting key {} from state_dict.".format(k))
                     del sd[k]
-        self.load_state_dict(sd, strict=False)
+        missing, unexpected = self.load_state_dict(sd, strict=False)
+        if len(missing) > 0:
+            print(f"Missing keys in state dict: {missing}")
+        if len(unexpected) > 0:
+            print(f"Unexpected keys in state dict: {unexpected}")
 
     def encode(self, x, return_mode=False):
         moments = self.encoder(x)

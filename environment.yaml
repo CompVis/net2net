@@ -20,4 +20,5 @@ dependencies:
     - omegaconf==2.0.0
     - streamlit==0.71.0
     - test-tube>=0.7.5
+    - sentence-transformers>=0.3.8
     - -e .

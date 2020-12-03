@@ -8,7 +8,7 @@ Code accompanying the NeurIPS 2020 oral paper
 \* equal contribution
 
 **tl;dr** Our approach distills the residual information of one model with respect to
-another's and thereby enables translation between fixed off-the-shelve expert
+another's and thereby enables translation between fixed off-the-shelf expert
 models such as BERT and BigGAN without having to modify or finetune them.
 
 ![teaser](assets/teaser.png)
@@ -42,7 +42,7 @@ conda activate net2net
   the [PGGAN repository](https://github.com/tkarras/progressive_growing_of_gans)).
 - **FFHQ**: Create a symlink `data/ffhq` pointing to the `images1024x1024` folder
   obtained from the [FFHQ repository](https://github.com/NVlabs/ffhq-dataset).
-- **Anime Faces**: First download the face images from the [Anime Crop dataset]() and then apply
+- **Anime Faces**: First download the face images from the [Anime Crop dataset](https://www.gwern.net/Crops) and then apply
   the preprocessing of [FFHQ](https://github.com/NVlabs/ffhq-dataset) to those images. We only keep images 
   where the underlying [dlib face recognition model](http://dlib.net/face_landmark_detection.py.html) recognizes 
   a face. Finally, create a symlink `data/anime` which contains the processed anime face images.
@@ -146,7 +146,7 @@ More information can be found in our paper [A Note on Data Biases in Generative
 Models](https://drive.google.com/file/d/1PGhBTEAgj2A_FnYMk_1VU-uOxcWY076B/view?usp=sharing) from the [Machine Learning for Creativity and Design](https://neurips2020creativity.github.io/) at [NeurIPS 2020](https://nips.cc/Conferences/2020). Download the models from
 
 - [2020-11-30T23-32-28_celeba_celebahq_ffhq_256](https://heibox.uni-heidelberg.de/d/c50a84928bec42ca8a50/)
-- [2020-12-02T13-58-19_anime_photography_256](TODO)
+- [2020-12-02T13-58-19_anime_photography_256](https://heibox.uni-heidelberg.de/d/075e81e16de948aea7a1/)
 
 and place them into `logs`. Run the demo with
 
