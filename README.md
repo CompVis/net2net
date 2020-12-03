@@ -158,7 +158,23 @@ To run the training as described above, put them into
 
 ### Training a cINN - Unpaired Translation
 ![superres](assets/unpairedtranslationfigure.png) 
-TODO.
+All training scenarios for unpaired translation are specified in the configs in `configs/creativity`.
+We provide code and pretrained autoencoder models for three different translation tasks:
+- **Anime** ⟷ **Photography**; see `configs/creativity/anime_photography_256.yaml`. 
+  Download autoencoder checkpoint ([Download Anime+Photography](https://heibox.uni-heidelberg.de/f/315c628c8b0e40238132/)) and place into `logs/2020-09-30T21-40-22_AnimeAndFHQ/checkpoints/epoch=000007.ckpt`. 
+- **Oil-Portrait** ⟷ **Photography**; see `configs/creativity/portraits_photography_256.yaml`
+  Download autoencoder checkpoint ([Download Portrait+Photography](https://heibox.uni-heidelberg.de/f/4f9449418a2e4025bb5f/)) and place into `logs/2020-09-29T23-47-10_PortraitsAndFFHQ/checkpoints/epoch=000004.ckpt`.
+- **FFHQ** ⟷ **CelebA-HQ** ⟷ **CelebA**; see `configs/creativity/celeba_celebahq_ffhq_256.yaml`
+  Download autoencoder checkpoint ([Download FFHQ+CelebAHQ+CelebA](https://heibox.uni-heidelberg.de/f/64f57a9dcbdc480f9178/)) and place into `logs/2020-09-16T16-23-39_FacesXL256z128/checkpoints/last.ckpt`. 
+  Note that this is the same autoencoder checkpoint as for the stochastic superresolution experiment.
+
+To train a cINN on one of these unpaired transfer tasks using the first GPU, simply run
+```
+python translation.py --base configs/translation/<task-of-interest>.yaml -t --gpus 0, 
+```
+where `<task-of-interest>.yaml` is one of `portraits_photography_256.yaml`, `celeba_celebahq_ffhq_256.yaml` 
+or `anime_photography_256.yaml`. Providing additional arguments to the pytorch-lightning
+trainer object is also possible and described above.
 
 ## BibTeX
 
