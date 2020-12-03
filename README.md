@@ -48,6 +48,24 @@ conda activate net2net
   a face. Finally, create a symlink `data/anime` which contains the processed anime face images.
 - **Oil Portraits**: [Download here.](https://heibox.uni-heidelberg.de/f/4f35bdc16eea4158aa47/?dl=1)
   Unpack the content and place the files in `data/portraits`.
+
+## ML4Creativity Demo
+We include a [streamlit](https://www.streamlit.io/) demo, which utilizes our
+approach to demonstrate biases of datasets and their creative applications.
+More information can be found in our paper [A Note on Data Biases in Generative
+Models](https://drive.google.com/file/d/1PGhBTEAgj2A_FnYMk_1VU-uOxcWY076B/view?usp=sharing) from the [Machine Learning for Creativity and Design](https://neurips2020creativity.github.io/) at [NeurIPS 2020](https://nips.cc/Conferences/2020). Download the models from
+
+- [2020-11-30T23-32-28_celeba_celebahq_ffhq_256](https://heibox.uni-heidelberg.de/d/c50a84928bec42ca8a50/)
+- [2020-12-02T13-58-19_anime_photography_256](https://heibox.uni-heidelberg.de/d/075e81e16de948aea7a1/)
+- [2020-12-02T16-19-39_portraits_photography_256](https://heibox.uni-heidelberg.de/d/9c03560e605e40efb818/)
+
+
+and place them into `logs`. Run the demo with
+
+```
+streamlit run ml4cad.py
+```
+
 ## Training
 Our code uses [Pytorch-Lightning](https://www.pytorchlightning.ai/) and thus natively supports
 things like 16-bit precision, multi-GPU training and gradient accumulation. Training details for any model need to be specified in a dedicated `.yaml` file.
@@ -113,7 +131,7 @@ specified by `first_stage_config`.  Our model `net2net.models.flows.flow.Net2Net
 network has a `.encode()` method which produces the representation of interest, while the second network should
 have an `encode()` and a `decode()` method, such that both of them applied sequentially produce the networks output. This allows for a modular combination of arbitrary models of interest. For more details, see the examples below.
 
-### Training a cINN - Examples
+### Training a cINN - Superresolution
 ![superres](assets/superresolutionfigure.png) 
 Training details for a cINN to concatenate two autoencoders from different image scales for stochastic
 superresolution are specified in `configs/translation/faces32-to-256.yaml`. 
@@ -138,23 +156,9 @@ To run the training as described above, put them into
 `logs/2020-10-16T17-11-42_FacesFQ32x32/checkpoints/last.ckpt`and 
 `logs/2020-09-16T16-23-39_FacesXL256z128/checkpoints/last.ckpt`, respectively.
 
-## ML4Creativity Demo
-
-We include a [streamlit](https://www.streamlit.io/) demo, which utilizes our
-approach to demonstrate biases of datasets and their creative applications.
-More information can be found in our paper [A Note on Data Biases in Generative
-Models](https://drive.google.com/file/d/1PGhBTEAgj2A_FnYMk_1VU-uOxcWY076B/view?usp=sharing) from the [Machine Learning for Creativity and Design](https://neurips2020creativity.github.io/) at [NeurIPS 2020](https://nips.cc/Conferences/2020). Download the models from
-
-- [2020-11-30T23-32-28_celeba_celebahq_ffhq_256](https://heibox.uni-heidelberg.de/d/c50a84928bec42ca8a50/)
-- [2020-12-02T13-58-19_anime_photography_256](https://heibox.uni-heidelberg.de/d/075e81e16de948aea7a1/)
-- [2020-12-02T16-19-39_portraits_photography_256](https://heibox.uni-heidelberg.de/d/9c03560e605e40efb818/)
-
-
-and place them into `logs`. Run the demo with
-
-```
-streamlit run ml4cad.py
-```
+### Training a cINN - Unpaired Translation
+![superres](assets/unpairedtranslationfigure.png) 
+TODO.
 
 ## BibTeX
 
