@@ -134,7 +134,8 @@ class ConditionalFlatCouplingFlow(nn.Module):
         # TODO: also for spatial inputs...
         if conditioner_use_bn:
             assert not conditioner_use_an, 'Can not use ActNorm and BatchNorm simultaneously in Embedder.'
-            print("Note: Conditioning network uses batch-normalization. Are you sure?")
+            print("Note: Conditioning network uses batch-normalization. "
+                  "Make sure to train with a sufficiently large batch size")
 
         self.embedder = BasicFullyConnectedNet(dim=conditioning_dim,
                                                depth=conditioning_depth,
