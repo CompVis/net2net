@@ -147,6 +147,8 @@ Models](https://drive.google.com/file/d/1PGhBTEAgj2A_FnYMk_1VU-uOxcWY076B/view?u
 
 - [2020-11-30T23-32-28_celeba_celebahq_ffhq_256](https://heibox.uni-heidelberg.de/d/c50a84928bec42ca8a50/)
 - [2020-12-02T13-58-19_anime_photography_256](https://heibox.uni-heidelberg.de/d/075e81e16de948aea7a1/)
+- [2020-12-02T16-19-39_portraits_photography_256](TODO)
+
 
 and place them into `logs`. Run the demo with
 
