@@ -3,17 +3,15 @@
 
 from sentence_transformers import SentenceTransformer
 import numpy as np
-import torch
 import torch.nn as nn
 
 
 class SentenceEmbedder(nn.Module):
-    def __init__(self, version='roberta-large-nli-stsb-mean-tokens'):
+    def __init__(self, version='bert-large-nli-stsb-mean-tokens'):
         super().__init__()
         np.set_printoptions(threshold=100)
         # Load Sentence model (based on BERT) from URL
         self.model = SentenceTransformer(version, device="cuda")
-        #self.model.to(self.device)
         self.model.eval()
 
     def forward(self, sentences):
@@ -25,7 +23,7 @@ class SentenceEmbedder(nn.Module):
         """
         sentence_embeddings = self.model.encode(sentences, batch_size=len(sentences), show_progress_bar=False,
                                                 convert_to_tensor=True)
-        return sentence_embeddings
+        return sentence_embeddings.cuda()
 
     def encode(self, sentences):
         embeddings = self(sentences)
