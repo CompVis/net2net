@@ -1,0 +1,39 @@
+model:
+  base_learning_rate: 4.5e-6
+  target: net2net.models.flows.flow.Net2NetFlow
+  params:
+    first_stage_key: "image"
+    cond_stage_key: "caption"
+    flow_config:
+      target: net2net.modules.flow.flatflow.ConditionalFlatCouplingFlow
+      params:
+        conditioning_dim: 1024
+        embedding_dim: 256
+        conditioning_depth: 2
+        n_flows: 24
+        in_channels: 120
+        hidden_dim: 1024
+        hidden_depth: 2
+        activation: "none"
+        conditioner_use_bn: True
+
+    cond_stage_config:
+      target: net2net.modules.sbert.model.SentenceEmbedder
+      params:
+        version: "bert-large-nli-stsb-mean-tokens"
+
+    first_stage_config:
+      target: net2net.modules.gan.bigbigan.BigBiGAN
+
+data:
+  target: translation.DataModuleFromConfig
+  params:
+    batch_size: 16
+    train:
+      target: net2net.data.coco.CocoImagesAndCaptionsTrain
+      params:
+        size: 256
+    validation:
+      target: net2net.data.coco.CocoImagesAndCaptionsValidation
+      params:
+        size: 256
