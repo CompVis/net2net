@@ -44,8 +44,6 @@ def md5_hash(path):
 
 def get_ckpt_path(name, root, check=False):
     assert name in URL_MAP
-    #cachedir = os.environ.get("XDG_CACHE_HOME", os.path.expanduser("~/.cache"))
-    #root = root if root is not None else os.path.join(cachedir, "autoencoders")
     path = os.path.join(root, CKPT_MAP[name])
     if not os.path.exists(path) or (check and not md5_hash(path) == MD5_MAP[name]):
         print("Downloading {} model from {} to {}".format(name, URL_MAP[name], path))
