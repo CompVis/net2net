@@ -5,6 +5,7 @@ import pytorch_lightning as pl
 from translation import instantiate_from_config
 from net2net.modules.flow.loss import NLL
 from net2net.ckpt_util import get_ckpt_path
+from net2net.modules.util import log_txt_as_img
 
 
 class Flow(pl.LightningModule):
@@ -142,6 +143,10 @@ class Net2NetFlow(pl.LightningModule):
         log["inputs"] = x
         if self.cond_stage_key not in ["text", "caption", "class"]:
             log["conditioning"] = xc
+        else:
+            _,_,h,w = x.shape
+            log["conditioning"] = log_txt_as_img((w,h), xc)
+
         log["reconstructions"] = xrec
         log["shift"] = xshift
         log["samples"] = xsample
