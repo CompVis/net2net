@@ -4,7 +4,7 @@ import pytorch_lightning as pl
 
 from translation import instantiate_from_config
 from net2net.modules.flow.loss import NLL
-from net2net.models.flows.util import plot2d
+from net2net.ckpt_util import get_ckpt_path
 
 
 class Flow(pl.LightningModule):
@@ -187,3 +187,66 @@ class Net2NetFlow(pl.LightningModule):
                                betas=(0.5, 0.9),
                                amsgrad=True)
         return [opt], []
+
+
+class Net2BigGANFlow(Net2NetFlow):
+    def __init__(self,
+                 flow_config,
+                 gan_config,
+                 cond_stage_config,
+                 make_cond_config,
+                 ckpt_path=None,
+                 ignore_keys=[],
+                 ):
+        super().__init__(flow_config=flow_config,
+                         first_stage_config=gan_config, cond_stage_config=cond_stage_config,
+                         ckpt_path=ckpt_path, ignore_keys=ignore_keys,
+                         )
+
+        self.to_c_model = instantiate_from_config(make_cond_config)
+        self.init_preprocessing()
+
+    @torch.no_grad()
+    def get_input(self, batch):
+        zin = batch["z"]
+        cin = batch["class"]
+        # dequantize the discrete class code
+        cin = self.first_stage_model.embed_labels(cin, labels_are_one_hot=False)
+        xin = self.first_stage_model.generate_from_embedding(zin, cin)
+        xc = self.to_c_model(xin)
+        cin = self.dequantizer(cin)
+        zflow = torch.cat([zin, cin.detach()], dim=1)[:, :, None, None]  # this will be flowed
+        return {"zcode": zflow,
+                "xgen": xin,
+                "xcon": xc
+                }
+
+    def init_preprocessing(self):
+        dqcfg = {"target": "net2net.modules.autoencoder.basic.BasicFullyConnectedVAE"}
+        self.dequantizer = instantiate_from_config(dqcfg)
+        ckpt = get_ckpt_path("dequant_vae", "net2net/modules/autoencoder/dequant_vae")
+        self.dequantizer.load_state_dict(torch.load(ckpt, map_location=torch.device("cpu")), strict=False)
+        self.dequantizer.eval()
+
+    def shared_step(self, batch, batch_idx, split="train"):
+        data = self.get_input(batch)
+        z, c = data["zcode"], data["xcon"]
+        zz, logdet = self(z, c)
+        loss, log_dict = self.loss(zz, logdet, split=split)
+        return loss, log_dict
+
+    def forward(self, z, c):
+        c = self.encode_to_c(c)
+        zz, logdet = self.flow(z, c)
+        return zz, logdet
+
+    @torch.no_grad()
+    def log_images(self, batch, split=""):
+        # TODO
+        log = dict()
+        return log
+
+    @torch.no_grad()
+    def sample_conditional(self, c):
+        z = self.flow.sample(c)
+        return z

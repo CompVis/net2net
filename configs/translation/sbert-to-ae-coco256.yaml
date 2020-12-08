@@ -1,0 +1,60 @@
+model:
+  base_learning_rate: 4.5e-6
+  target: net2net.models.flows.flow.Net2NetFlow
+  params:
+    first_stage_key: "image"
+    cond_stage_key: "caption"
+    flow_config:
+      target: net2net.modules.flow.flatflow.ConditionalFlatCouplingFlow
+      params:
+        conditioning_dim: 1024
+        embedding_dim: 256
+        conditioning_depth: 2
+        n_flows: 84
+        in_channels: 256
+        hidden_dim: 1024
+        hidden_depth: 2
+        activation: "none"
+        conditioner_use_bn: True
+
+    cond_stage_config:
+      target: net2net.modules.sbert.model.SentenceEmbedder
+      params:
+        version: "bert-large-nli-stsb-mean-tokens"
+
+    first_stage_config:
+      target: net2net.models.autoencoder.BigAE
+      params:
+        ckpt_path: "logs/2020-10-20T12-00-14_COCO256_restoreLSUN7_256z/checkpoints/last.ckpt"
+
+        encoder_config:
+          target: net2net.modules.autoencoder.encoder.ResnetEncoder
+          params:
+            in_channels: 3
+            in_size: 256
+            pretrained: false
+            type: resnet101
+            z_dim: 256
+
+        decoder_config:
+          target: net2net.modules.autoencoder.decoder.BigGANDecoderWrapper
+          params:
+            z_dim: 256
+            in_size: 256
+            use_actnorm_in_dec: true
+
+        loss_config:
+          target: net2net.modules.autoencoder.loss.DummyLoss
+
+data:
+  target: translation.DataModuleFromConfig
+  params:
+    batch_size: 16
+    train:
+      target: net2net.data.coco.CocoImagesAndCaptionsTrain
+      params:
+        size: 256
+    validation:
+      target: net2net.data.coco.CocoImagesAndCaptionsValidation
+      params:
+        size: 256

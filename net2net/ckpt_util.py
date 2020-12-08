@@ -10,9 +10,9 @@ URL_MAP = {
 }
 
 CKPT_MAP = {
-    "biggan_128": "autoencoders/biggan/biggan-128.pth",
-    "biggan_256": "autoencoders/biggan/biggan-256.pth",
-    "dequant_vae": "autoencoders/dequant/dequantvae-20000.ckpt",
+    "biggan_128": "biggan-128.pth",
+    "biggan_256": "biggan-256.pth",
+    "dequant_vae": "dequantvae-20000.ckpt",
     "vgg_lpips": "autoencoders/lpips/vgg.pth"
 }
 

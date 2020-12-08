@@ -207,6 +207,14 @@ the sections `data` and `first_stage_config` in
 new model to the available modes in the `ml4cad.py` demo to visualize the
 results.
 
+
+## References
+TODO
+- Artsiom (portraits)
+- BigGAN code and weights from: [LoreGoetschalckx/GANalyze](https://github.com/LoreGoetschalckx/GANalyze)
+- Code and weights for the captioning model: [https://github.com/sgrvinod/a-PyTorch-Tutorial-to-Image-Captioning](https://github.com/sgrvinod/a-PyTorch-Tutorial-to-Image-Captioning)
+
+
 ## BibTeX
 
 ```
