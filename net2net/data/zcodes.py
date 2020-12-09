@@ -59,7 +59,7 @@ class TestSamples(Dataset):
 
 class RestrictedTrainSamples(Dataset):
     def __init__(self, n_samples, z_shape, truncation=-1):
-        index_path = "/data/coco_imagenet_overlap_idx.txt"
+        index_path = "data/coco_imagenet_overlap_idx.txt"
         self.prng = np.random.RandomState(1)
         self.n_samples = n_samples
         self.z_shape = z_shape
@@ -79,7 +79,7 @@ class RestrictedTrainSamples(Dataset):
                     zi = self.prng.randn(1)
                 z[k] = zi
         cls = self.prng.choice(self.classes)
-        return {"z": z, "class": cls}
+        return {"z": z.astype(np.float32), "class": cls}
 
 
 class RestrictedTestSamples(Dataset):
@@ -110,6 +110,6 @@ class RestrictedTestSamples(Dataset):
         return self.n_samples
 
     def __getitem__(self, i):
-        return {"z": self.zs[i], "class": self.clss[i]}
+        return {"z": self.zs[i].astype(np.float32), "class": self.clss[i]}
 
 
