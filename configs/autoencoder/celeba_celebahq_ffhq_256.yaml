@@ -1,0 +1,40 @@
+model:
+  base_learning_rate: 4.5e-6
+  target: net2net.models.autoencoder.BigAE
+  params:
+    loss_config:
+      target: net2net.modules.autoencoder.loss.LPIPSWithDiscriminator
+      params:
+        disc_start: 75001
+        kl_weight: 0.000001
+        disc_weight: 0.5
+
+    encoder_config:
+      target: net2net.modules.autoencoder.encoder.ResnetEncoder
+      params:
+        in_channels: 3
+        in_size: 256
+        pretrained: false
+        type: resnet101
+        z_dim: 128
+
+    decoder_config:
+      target: net2net.modules.autoencoder.decoder.BigGANDecoderWrapper
+      params:
+        z_dim: 128
+        in_size: 256
+        use_actnorm_in_dec: true
+
+
+data:
+  target: translation.DataModuleFromConfig
+  params:
+    batch_size: 3
+    train:
+      target: net2net.data.faces.CCFQTrain
+      params:
+        size: 256
+    validation:
+      target: net2net.data.faces.CCFQValidation
+      params:
+        size: 256

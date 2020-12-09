@@ -47,7 +47,9 @@ conda activate net2net
   where the underlying [dlib face recognition model](http://dlib.net/face_landmark_detection.py.html) recognizes 
   a face. Finally, create a symlink `data/anime` which contains the processed anime face images.
 - **Oil Portraits**: [Download here.](https://heibox.uni-heidelberg.de/f/4f35bdc16eea4158aa47/?dl=1)
-  Unpack the content and place the files in `data/portraits`.
+  Unpack the content and place the files in `data/portraits`. It consists of
+  18k oil portraits, which were obtained by running [dlib](http://dlib.net/face_landmark_detection.py.html) on a subset of the [WikiArt dataset](https://www.wikiart.org/)
+  dataset, kindly provided by [A Style-Aware Content Loss for Real-time HD Style Transfer](https://github.com/CompVis/adaptive-style-transfer).
 
 ## ML4Creativity Demo
 We include a [streamlit](https://www.streamlit.io/) demo, which utilizes our
@@ -170,11 +172,40 @@ We provide code and pretrained autoencoder models for three different translatio
 
 To train a cINN on one of these unpaired transfer tasks using the first GPU, simply run
 ```
-python translation.py --base configs/translation/<task-of-interest>.yaml -t --gpus 0, 
+python translation.py --base configs/creativity/<task-of-interest>.yaml -t --gpus 0,
 ```
 where `<task-of-interest>.yaml` is one of `portraits_photography_256.yaml`, `celeba_celebahq_ffhq_256.yaml` 
 or `anime_photography_256.yaml`. Providing additional arguments to the pytorch-lightning
-trainer object is also possible and described above.
+trainer object is also possible as described above.
+
+In our framework, unpaired translation between domains is formulated as a
+translation between expert 1, a model which can infer the domain a given image
+belongs to, and expert 2, a model which can synthesize images of each domain.
+In the examples provided, we assume that the domain label comes with the
+dataset and provide the `net2net.modules.labels.model.Labelator` module, which
+simply returns a one hot encoding of this label. However, one could also use a
+classification model which infers the domain label from the image itself.
+For expert 2, our examples use an autoencoder trained jointly on all domains,
+which is easily achieved by concatenating datasets together. The provided
+`net2net.data.base.ConcatDatasetWithIndex` concatenates datasets and returns
+the corresponding dataset label for each example, which can then be used by the
+`Labelator` class for the translation. The training configurations for the
+autoencoders used in the creativity experiments are included in
+`configs/autoencoder/anime_photography_256.yaml`,
+`configs/autoencoder/celeba_celebahq_ffhq_256.yaml` and
+`configs/autoencoder/portraits_photography_256.yaml`.
+
+#### Unpaired Translation on Custom Datasets
+Create pytorch datasets for each
+of your domains, create a concatenated dataset with `ConcatDatasetWithIndex`
+(follow the example in `net2net.data.faces.CCFQTrain`), train an
+autoencoder on the concatenated dataset (adjust the `data` section in
+`configs/autoencoder/celeba_celebahq_ffhq_256.yaml`) and finally train a
+net2net translation model between a `Labelator` and your autoencoder (adjust
+the sections `data` and `first_stage_config` in
+`configs/creativity/celeba_celebahq_ffhq_256.yaml`). You can then also add your
+new model to the available modes in the `ml4cad.py` demo to visualize the
+results.
 
 ## BibTeX
 

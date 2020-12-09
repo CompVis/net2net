@@ -49,12 +49,12 @@ model:
 data:
   target: translation.DataModuleFromConfig
   params:
-    batch_size: 6
+    batch_size: 15
     train:
-      target: net2net.data.faces.FacesHQAndAnimeTrain
+      target: net2net.data.faces.CCFQTrain
       params:
         size: 256
     validation:
-      target: net2net.data.faces.FacesHQAndAnimeValidation
+      target: net2net.data.faces.CCFQValidation
       params:
         size: 256
