@@ -83,13 +83,12 @@ class RestrictedTrainSamples(Dataset):
 
 
 class RestrictedTestSamples(Dataset):
-    def __init__(self, n_samples, z_shape, n_classes, truncation=-1):
+    def __init__(self, n_samples, z_shape, truncation=-1):
         index_path = "data/coco_imagenet_overlap_idx.txt"
 
         self.prng = np.random.RandomState(1)
         self.n_samples = n_samples
         self.z_shape = z_shape
-        self.n_classes = n_classes
 
         self.classes = np.loadtxt(index_path).astype(int)
         self.clss = self.prng.choice(self.classes, size=(self.n_samples,), replace=True)

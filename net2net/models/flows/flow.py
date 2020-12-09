@@ -202,28 +202,33 @@ class Net2BigGANFlow(Net2NetFlow):
                  make_cond_config,
                  ckpt_path=None,
                  ignore_keys=[],
+                 cond_stage_key="caption"
                  ):
         super().__init__(flow_config=flow_config,
                          first_stage_config=gan_config, cond_stage_config=cond_stage_config,
-                         ckpt_path=ckpt_path, ignore_keys=ignore_keys,
+                         ckpt_path=ckpt_path, ignore_keys=ignore_keys, cond_stage_key=cond_stage_key
                          )
 
         self.to_c_model = instantiate_from_config(make_cond_config)
         self.init_preprocessing()
 
     @torch.no_grad()
-    def get_input(self, batch):
+    def get_input(self, batch, move_to_device=False):
         zin = batch["z"]
         cin = batch["class"]
+        if move_to_device:
+            zin, cin = zin.to(self.device), cin.to(self.device)
         # dequantize the discrete class code
         cin = self.first_stage_model.embed_labels(cin, labels_are_one_hot=False)
+        split_sizes = [zin.shape[1], cin.shape[1]]
         xin = self.first_stage_model.generate_from_embedding(zin, cin)
-        xc = self.to_c_model(xin)
         cin = self.dequantizer(cin)
+        xc = self.to_c_model(xin)
         zflow = torch.cat([zin, cin.detach()], dim=1)[:, :, None, None]  # this will be flowed
         return {"zcode": zflow,
                 "xgen": xin,
-                "xcon": xc
+                "xcon": xc,
+                "split_sizes": split_sizes
                 }
 
     def init_preprocessing(self):
@@ -247,8 +252,32 @@ class Net2BigGANFlow(Net2NetFlow):
 
     @torch.no_grad()
     def log_images(self, batch, split=""):
-        # TODO
         log = dict()
+        data = self.get_input(batch, move_to_device=True)
+        z, xc, x = data["zcode"], data["xcon"], data["xgen"]
+        c = self.encode_to_c(xc)
+        zz, _ = self.flow(z, c)
+
+        z_sample = self.sample_conditional(c)
+        zdec, cdec = torch.split(z_sample, data["split_sizes"], dim=1)
+        xsample = self.first_stage_model.generate_from_embedding(zdec.squeeze(-1).squeeze(-1),
+                                                                 cdec.squeeze(-1).squeeze(-1))
+
+        cshift = torch.cat((c[1:],c[:1]),dim=0)
+        zshift = self.flow.reverse(zz, cshift)
+        zshift, cshift = torch.split(zshift, data["split_sizes"], dim=1)
+        xshift = self.first_stage_model.generate_from_embedding(zshift.squeeze(-1).squeeze(-1),
+                                                                cshift.squeeze(-1).squeeze(-1))
+
+        log["inputs"] = x
+        if self.cond_stage_key not in ["text", "caption", "class"]:
+            log["conditioning"] = xc
+        else:
+            _,_,h,w = x.shape
+            log["conditioning"] = log_txt_as_img((w,h), xc)
+
+        log["shift"] = xshift
+        log["samples"] = xsample
         return log
 
     @torch.no_grad()

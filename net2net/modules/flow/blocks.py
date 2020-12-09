@@ -2,33 +2,7 @@ import torch
 import torch.nn as nn
 import functools
 
-from net2net.modules.autoencoder.basic import ActNorm
-
-
-class BasicFullyConnectedNet(nn.Module):
-    def __init__(self, dim, depth, hidden_dim=256, use_tanh=False, use_bn=False, out_dim=None, use_an=False):
-        super(BasicFullyConnectedNet, self).__init__()
-        layers = []
-        layers.append(nn.Linear(dim, hidden_dim))
-        if use_bn:
-            assert not use_an
-            layers.append(nn.BatchNorm1d(hidden_dim))
-        if use_an:
-            assert not use_bn
-            layers.append(ActNorm(hidden_dim))
-        layers.append(nn.LeakyReLU())
-        for d in range(depth):
-            layers.append(nn.Linear(hidden_dim, hidden_dim))
-            if use_bn:
-                layers.append(nn.BatchNorm1d(hidden_dim))
-            layers.append(nn.LeakyReLU())
-        layers.append(nn.Linear(hidden_dim, dim if out_dim is None else out_dim))
-        if use_tanh:
-            layers.append(nn.Tanh())
-        self.main = nn.Sequential(*layers)
-
-    def forward(self, x):
-        return self.main(x)
+from net2net.modules.autoencoder.basic import ActNorm, BasicFullyConnectedNet
 
 
 class Flow(nn.Module):

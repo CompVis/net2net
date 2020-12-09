@@ -1,4 +1,4 @@
-# built upon https://github.com/LoreGoetschalckx/GANalyze
+# built upon the very nice https://github.com/LoreGoetschalckx/GANalyze
 import torch
 import torch.nn as nn
 from torch.nn import BatchNorm2d
@@ -6,6 +6,7 @@ from torch.nn import Parameter
 import torch.nn.functional as F
 
 from net2net.modules.autoencoder.basic import ActNorm
+from net2net.ckpt_util import get_ckpt_path
 
 
 class GANException(Exception):
@@ -157,6 +158,11 @@ class ActNorm2dWrap(nn.Module):
 
     def forward(self, x, y=None):
         return self.bn(x)
+
+
+def update_G_linear(biggan_generator, n_in, n_out=16*16*96):
+    biggan_generator.G_linear = SpectralNorm(nn.Linear(n_in, n_out))
+    return biggan_generator
 
 
 class GBlock(nn.Module):
@@ -346,13 +352,6 @@ class VariableDimGenerator128(Generator128):
 class Generator256(nn.Module):
     def __init__(self, code_dim=140, n_class=1000, chn=96, debug=False, use_actnorm=False):
         super().__init__()
-        if not use_actnorm:
-            import warnings
-            class BatchNormWarning(UserWarning):
-                pass
-            warnings.warn("You are training with batch norm. It is highly recommended to switch to some "
-                          "other normalization method if a low batch size is used. Furthermore, Google may "
-                          "sue you for breaking the patent law!", BatchNormWarning)
         self.linear = nn.Linear(n_class, 128, bias=False)
 
         if debug:
@@ -447,9 +446,48 @@ class VariableDimGenerator256(Generator256):
         return torch.tanh(out)
 
 
-def update_G_linear(biggan_generator, n_in, n_out=16*16*96):
-    biggan_generator.G_linear = SpectralNorm(nn.Linear(n_in, n_out))
-    return biggan_generator
+class BigGANWrapper(nn.Module):
+    def __init__(self, image_size=256):
+        super().__init__()
+        self.class_embedding_dim = 1000
+        self.decoder = load_generator(image_size, pretrained=True, use_actnorm=False,
+                                      n_class=self.class_embedding_dim)
+
+    def forward(self, x, labels, labels_are_one_hot=False):
+        if not labels_are_one_hot:
+            one_hot = torch.nn.functional.one_hot(labels, num_classes=self.class_embedding_dim).float()
+        else:
+            one_hot = labels
+            if labels.shape[1] != self.class_embedding_dim:
+                zeros = torch.zeros(labels.shape[0], self.class_embedding_dim).to(labels)
+                zeros[:,:labels.shape[1]] = labels
+                one_hot = zeros
+        x = self.decoder(x, one_hot)
+        return x
+
+    def embed_labels(self, labels, labels_are_one_hot=False):
+        """embeds labels, usually in a 128-dim space"""
+        if not labels_are_one_hot:
+            one_hot = torch.nn.functional.one_hot(labels, num_classes=self.class_embedding_dim).float()
+        else:
+            one_hot = labels
+        return self.decoder.linear(one_hot)
+
+    def generate_from_embedding(self, x, class_emb):
+        return self.decoder(x, class_emb, from_class_embedding=True)
+
+
+def load_generator(size, pretrained=True, use_actnorm=False, n_class=1000):
+    """ size an integer in [128, 256]"""
+    assert size in [128, 256]
+    __generators = {128: Generator128, 256: Generator256}
+    __names = {128: "biggan_128", 256: "biggan_256"}
+    if pretrained:
+        assert n_class==1000
+    G = __generators[size](use_actnorm=use_actnorm, n_class=n_class)
+    ckpt = get_ckpt_path(__names[size], "net2net/modules/gan/pretrained_biggan")
+    G.load_state_dict(torch.load(ckpt, map_location=torch.device("cpu")), strict=False)
+    return G
 
 
 def load_variable_latsize_generator(size, z_dim,
@@ -464,3 +502,9 @@ def load_variable_latsize_generator(size, z_dim,
     split_sizes = {128: 5*20, 256: 6*20}
     G = update_G_linear(G, z_dim - split_sizes[size])  # add new trainable layer to adopt for variable z_dim size
     return G
+
+
+if __name__ == "__main__":
+    G = load_generator(256)
+    G = load_generator(128)
+    print("done.")

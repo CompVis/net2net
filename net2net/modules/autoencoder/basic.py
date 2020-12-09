@@ -99,6 +99,32 @@ class ActNorm(nn.Module):
         return h
 
 
+class BasicFullyConnectedNet(nn.Module):
+    def __init__(self, dim, depth, hidden_dim=256, use_tanh=False, use_bn=False, out_dim=None, use_an=False):
+        super(BasicFullyConnectedNet, self).__init__()
+        layers = []
+        layers.append(nn.Linear(dim, hidden_dim))
+        if use_bn:
+            assert not use_an
+            layers.append(nn.BatchNorm1d(hidden_dim))
+        if use_an:
+            assert not use_bn
+            layers.append(ActNorm(hidden_dim))
+        layers.append(nn.LeakyReLU())
+        for d in range(depth):
+            layers.append(nn.Linear(hidden_dim, hidden_dim))
+            if use_bn:
+                layers.append(nn.BatchNorm1d(hidden_dim))
+            layers.append(nn.LeakyReLU())
+        layers.append(nn.Linear(hidden_dim, dim if out_dim is None else out_dim))
+        if use_tanh:
+            layers.append(nn.Tanh())
+        self.main = nn.Sequential(*layers)
+
+    def forward(self, x):
+        return self.main(x)
+
+
 _norm_options = {
         "in": nn.InstanceNorm2d,
         "bn": nn.BatchNorm2d,
@@ -319,3 +345,44 @@ class ImageLayer(nn.Module):
                     bias=False),
                 FinalActivate()
                 ])
+
+
+class BasicFullyConnectedVAE(nn.Module):
+    def __init__(self, n_down=2, z_dim=128, in_channels=128, mid_channels=4096, use_bn=False, deterministic=False):
+        super().__init__()
+
+        self.be_deterministic = deterministic
+        self.encoder = BasicFullyConnectedNet(dim=in_channels, depth=n_down,
+                                              hidden_dim=mid_channels,
+                                              out_dim=in_channels,
+                                              use_bn=use_bn)
+        self.mu_layer = BasicFullyConnectedNet(in_channels, depth=n_down,
+                                               hidden_dim=mid_channels,
+                                               out_dim=z_dim,
+                                               use_bn=use_bn)
+        self.logvar_layer = BasicFullyConnectedNet(in_channels, depth=n_down,
+                                                   hidden_dim=mid_channels,
+                                                   out_dim=z_dim,
+                                                   use_bn=use_bn)
+        self.decoder = BasicFullyConnectedNet(dim=z_dim, depth=n_down+1,
+                                              hidden_dim=mid_channels,
+                                              out_dim=in_channels,
+                                              use_bn=use_bn)
+
+    def encode(self, x):
+        h = self.encoder(x)
+        mu = self.mu_layer(h)
+        logvar = self.logvar_layer(h)
+        return DiagonalGaussianDistribution(torch.cat((mu, logvar), dim=1), deterministic=self.be_deterministic)
+
+    def decode(self, x):
+        x = self.decoder(x)
+        return x
+
+    def forward(self, x):
+        x = self.encode(x).sample()
+        x = self.decoder(x)
+        return x
+
+    def get_last_layer(self):
+        return self.decoder.main[-1].weight

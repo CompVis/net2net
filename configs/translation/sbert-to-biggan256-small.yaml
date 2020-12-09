@@ -1,0 +1,51 @@
+model:
+  base_learning_rate: 4.5e-6
+  target: net2net.models.flows.flow.Net2BigGANFlow
+  params:
+    flow_config:
+      target: net2net.modules.flow.flatflow.ConditionalFlatCouplingFlow
+      params:
+        conditioning_dim: 768
+        embedding_dim: 268
+        conditioning_depth: 2
+        n_flows: 24
+        in_channels: 268
+        hidden_dim: 1024
+        hidden_depth: 2
+        activation: "none"
+        conditioner_use_bn: True
+
+    cond_stage_config:
+      target: net2net.modules.sbert.model.SentenceEmbedder
+      params:
+        version: "bert-base-nli-stsb-mean-tokens"
+
+    gan_config:
+      target: "net2net.modules.gan.biggan.BigGANWrapper"
+      params:
+        image_size: 256
+
+    make_cond_config:
+      # Takes an image produced by BigGAN and produces a textual description
+      target: "net2net.modules.captions.model.Img2Text"
+
+data:
+  target: translation.DataModuleFromConfig
+  params:
+    batch_size: 16
+    train:
+      target: net2net.data.zcodes.RestrictedTrainSamples
+      params:
+        n_samples: 100000
+        z_shape:
+          - 140
+
+        truncation: 2.5
+    validation:
+      target: net2net.data.zcodes.RestrictedTestSamples
+      params:
+        n_samples: 10000
+        z_shape:
+          - 140
+
+        truncation: 2.5
