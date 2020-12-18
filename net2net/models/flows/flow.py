@@ -8,6 +8,12 @@ from net2net.ckpt_util import get_ckpt_path
 from net2net.modules.util import log_txt_as_img
 
 
+def disabled_train(self, mode=True):
+    """Overwrite model.train with this function to make sure train/eval mode
+    does not change anymore."""
+    return self
+
+
 class Flow(pl.LightningModule):
     def __init__(self, flow_config):
         super().__init__()
@@ -87,11 +93,15 @@ class Net2NetFlow(pl.LightningModule):
 
     def init_first_stage_from_ckpt(self, config):
         model = instantiate_from_config(config)
-        self.first_stage_model = model.eval()
+        model = model.eval()
+        model.train = disabled_train
+        self.first_stage_model = model
 
     def init_cond_stage_from_ckpt(self, config):
         model = instantiate_from_config(config)
-        self.cond_stage_model = model.eval()
+        model = model.eval()
+        model.train = disabled_train
+        self.cond_stage_model = model
 
     def forward(self, x, c):
         c = self.encode_to_c(c)
@@ -209,7 +219,7 @@ class Net2BigGANFlow(Net2NetFlow):
                          ckpt_path=ckpt_path, ignore_keys=ignore_keys, cond_stage_key=cond_stage_key
                          )
 
-        self.to_c_model = instantiate_from_config(make_cond_config)
+        self.init_to_c_model(make_cond_config)
         self.init_preprocessing()
 
     @torch.no_grad()
@@ -231,12 +241,19 @@ class Net2BigGANFlow(Net2NetFlow):
                 "split_sizes": split_sizes
                 }
 
+    def init_to_c_model(self, config):
+        model = instantiate_from_config(config)
+        model = model.eval()
+        model.train = disabled_train
+        self.to_c_model = model
+
     def init_preprocessing(self):
         dqcfg = {"target": "net2net.modules.autoencoder.basic.BasicFullyConnectedVAE"}
         self.dequantizer = instantiate_from_config(dqcfg)
         ckpt = get_ckpt_path("dequant_vae", "net2net/modules/autoencoder/dequant_vae")
         self.dequantizer.load_state_dict(torch.load(ckpt, map_location=torch.device("cpu")), strict=False)
         self.dequantizer.eval()
+        self.dequantizer.train = disabled_train
 
     def shared_step(self, batch, batch_idx, split="train"):
         data = self.get_input(batch)

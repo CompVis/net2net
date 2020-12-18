@@ -80,8 +80,9 @@ class Img2Text(nn.Module):
     def make_single_caption(self, x):
         seq = self.caption_image_beam_search(x)[0][0]
         words = [self.rev_word_map[ind] for ind in seq]
-        if len(words) > 50:
-            return np.array(['<toolong>'])
+        words = words[:50]
+        #if len(words) > 50:
+        #    return np.array(['<toolong>'])
         text = ''
         for word in words:
             text += word + ' '
