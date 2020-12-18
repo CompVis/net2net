@@ -208,6 +208,16 @@ new model to the available modes in the `ml4cad.py` demo to visualize the
 results.
 
 
+### Training a cINN - Text-to-Image
+![texttoimage](assets/texttotimage.jpg)
+
+#### SBERT-to-BigGAN
+
+#### SBERT-to-BigBiGAN
+
+#### SBERT-to-AE
+
+
 ## References
 TODO
 - Artsiom (portraits)
