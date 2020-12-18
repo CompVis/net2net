@@ -209,7 +209,7 @@ results.
 
 
 ### Training a cINN - Text-to-Image
-![texttoimage](assets/texttotimage.jpg)
+![texttoimage](assets/texttoimage.jpg)
 
 #### SBERT-to-BigGAN
 
