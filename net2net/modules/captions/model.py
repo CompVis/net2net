@@ -11,6 +11,7 @@ import torch.nn.functional as F
 from torchvision import transforms
 from PIL import Image
 
+from net2net.ckpt_util import get_ckpt_path
 
 #import warnings
 #warnings.filterwarnings("ignore")
@@ -28,10 +29,8 @@ def imresize(img, size):
 class Img2Text(nn.Module):
     def __init__(self):
         super().__init__()
-        # TODO: add download instructions in README
-        # TODO: or automatic downlaod?
-        model_path = "net2net/modules/captions/captioning_model_pt16.ckpt"
-        word_map_path = "net2net/modules/captions/WORDMAP_coco_5_cap_per_img_5_min_word_freq.json"
+        model_path = get_ckpt_path("coco_captioner", "net2net/modules/captions")
+        word_map_path = "data/WORDMAP_coco_5_cap_per_img_5_min_word_freq.json"
 
         # Load word map (word2ix)
         with open(word_map_path, 'r') as j:
