@@ -243,8 +243,12 @@ model and serves as a good example on how to use black-box experts.
 #### SBERT-to-AE
 Similarly to the other examples, you can also train your own autoencoder on
 COCO with
-TODO
-or download a pre-trained one from TODO, and translate to it by running
+```
+python translation.py --base configs/autoencoder/coco256.yaml -t --gpus 0,
+```
+or [download a pre-trained
+one](https://heibox.uni-heidelberg.de/d/79123d2caef547d29dbe/), and translate
+to it by running
 ```
 python translation.py --base configs/translation/sbert-to-ae-coco256.yaml -t --gpus 0,
 ```

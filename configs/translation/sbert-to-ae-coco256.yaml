@@ -10,7 +10,7 @@ model:
         conditioning_dim: 1024
         embedding_dim: 256
         conditioning_depth: 2
-        n_flows: 84
+        n_flows: 24
         in_channels: 256
         hidden_dim: 1024
         hidden_depth: 2
@@ -25,7 +25,7 @@ model:
     first_stage_config:
       target: net2net.models.autoencoder.BigAE
       params:
-        ckpt_path: "logs/2020-10-20T12-00-14_COCO256_restoreLSUN7_256z/checkpoints/last.ckpt"
+        ckpt_path: "logs/2020-12-18T22-49-43_coco256/checkpoints/last.ckpt"
 
         encoder_config:
           target: net2net.modules.autoencoder.encoder.ResnetEncoder
