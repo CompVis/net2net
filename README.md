@@ -237,3 +237,14 @@ TODO
       primaryClass={cs.CV}
 }
 ```
+
+```
+@misc{esser2020note,
+      title={A Note on Data Biases in Generative Models}, 
+      author={Patrick Esser and Robin Rombach and Björn Ommer},
+      year={2020},
+      eprint={2012.02516},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV}
+}
+```
