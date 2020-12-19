@@ -14,6 +14,7 @@ models such as BERT and BigGAN without having to modify or finetune them.
 ![teaser](assets/teaser.png)
 [arXiv](https://arxiv.org/abs/2005.13580) | [BibTeX](#bibtex) | [Project Page](https://compvis.github.io/net2net/)
 
+**News Dec 19th, 2020**: added SBERT-to-BigGAN, SBERT-to-BigBiGAN and SBERT-to-AE (COCO) 
 ## Requirements
 A suitable [conda](https://conda.io/) environment named `net2net` can be created
 and activated with:
