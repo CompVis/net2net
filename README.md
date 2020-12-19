@@ -14,10 +14,6 @@ models such as BERT and BigGAN without having to modify or finetune them.
 ![teaser](assets/teaser.png)
 [arXiv](https://arxiv.org/abs/2005.13580) | [BibTeX](#bibtex) | [Project Page](https://compvis.github.io/net2net/)
 
-For now, example code for a translation between low-resolution and
-high-resolution autoencoders is provided to obtain a generative superresolution
-model. Other examples will be added until the [NeurIPS](https://nips.cc/) conference starts (December 2020).
-
 ## Requirements
 A suitable [conda](https://conda.io/) environment named `net2net` can be created
 and activated with:
@@ -50,6 +46,9 @@ conda activate net2net
   Unpack the content and place the files in `data/portraits`. It consists of
   18k oil portraits, which were obtained by running [dlib](http://dlib.net/face_landmark_detection.py.html) on a subset of the [WikiArt dataset](https://www.wikiart.org/)
   dataset, kindly provided by [A Style-Aware Content Loss for Real-time HD Style Transfer](https://github.com/CompVis/adaptive-style-transfer).
+- **COCO**: Create a symlink `data/coco` containing the images from the 2017
+  split in `train2017` and `val2017`, and their annotations in `annotations`.
+  Files can be obtained from the [COCO webpage](https://cocodataset.org).
 
 ## ML4Creativity Demo
 We include a [streamlit](https://www.streamlit.io/) demo, which utilizes our
@@ -210,17 +209,53 @@ results.
 
 ### Training a cINN - Text-to-Image
 ![texttoimage](assets/texttoimage.jpg)
+We provide code to obtain a text-to-image model by translating between a text
+model ([SBERT](https://www.sbert.net/)) and an image decoder. To show the
+flexibility of our approach, we include code for three different
+decoders: BigGAN, as described in the paper,
+[BigBiGAN](https://deepmind.com/research/open-source/BigBiGAN-Large-Scale-Adversarial-Representation-Learning),
+which is only available as a [tensorflow](https://www.tensorflow.org/) model
+and thus nicely shows how our approach can work with black-box experts, and an
+autoencoder.
 
 #### SBERT-to-BigGAN
+Train with
+```
+python translation.py --base configs/translation/sbert-to-biggan256.yaml -t --gpus 0,
+```
+When running it for the first time, the required models will be downloaded
+automatically.
 
 #### SBERT-to-BigBiGAN
+Since BigBiGAN is only available on
+[tensorflow-hub](https://tfhub.dev/s?q=bigbigan), this example has an
+additional dependency on tensorflow. A suitable environment is provided in
+`env_bigbigan.yaml`, and you will need COCO for training. You can then start
+training with
+```
+python translation.py --base configs/translation/sbert-to-bigbigan.yaml -t --gpus 0,
+```
+Note that the `BigBiGAN` class is just a naive wrapper, which converts pytorch
+tensors to numpy arrays, feeds them to the tensorflow graph and again converts
+the result to pytorch tensors. It does not require gradients of the expert
+model and serves as a good example on how to use black-box experts.
 
 #### SBERT-to-AE
+Similarly to the other examples, you can also train your own autoencoder on
+COCO with
+```
+python translation.py --base configs/autoencoder/coco256.yaml -t --gpus 0,
+```
+or [download a pre-trained
+one](https://heibox.uni-heidelberg.de/d/79123d2caef547d29dbe/), and translate
+to it by running
+```
+python translation.py --base configs/translation/sbert-to-ae-coco256.yaml -t --gpus 0,
+```
 
+## Shout-outs
+Thanks to everyone who makes their code and models available.
 
-## References
-TODO
-- Artsiom (portraits)
 - BigGAN code and weights from: [LoreGoetschalckx/GANalyze](https://github.com/LoreGoetschalckx/GANalyze)
 - Code and weights for the captioning model: [https://github.com/sgrvinod/a-PyTorch-Tutorial-to-Image-Captioning](https://github.com/sgrvinod/a-PyTorch-Tutorial-to-Image-Captioning)
 
