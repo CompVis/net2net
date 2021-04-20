@@ -57,9 +57,9 @@ approach to demonstrate biases of datasets and their creative applications.
 More information can be found in our paper [A Note on Data Biases in Generative
 Models](https://drive.google.com/file/d/1PGhBTEAgj2A_FnYMk_1VU-uOxcWY076B/view?usp=sharing) from the [Machine Learning for Creativity and Design](https://neurips2020creativity.github.io/) at [NeurIPS 2020](https://nips.cc/Conferences/2020). Download the models from
 
-- [2020-11-30T23-32-28_celeba_celebahq_ffhq_256](https://heibox.uni-heidelberg.de/d/c50a84928bec42ca8a50/)
+- [2020-11-30T23-32-28_celeba_celebahq_ffhq_256](https://k00.fr/lro927bu)
 - [2020-12-02T13-58-19_anime_photography_256](https://heibox.uni-heidelberg.de/d/075e81e16de948aea7a1/)
-- [2020-12-02T16-19-39_portraits_photography_256](https://heibox.uni-heidelberg.de/d/9c03560e605e40efb818/)
+- [2020-12-02T16-19-39_portraits_photography_256](https://k00.fr/y3rvnl3j)
 
 
 and place them into `logs`. Run the demo with
@@ -153,7 +153,7 @@ for the 32 x 32 images; and
 python translation.py --base configs/autoencoder/faces256.yaml -t --gpus <n>, 
 ```
 for the model on 256 x 256 images. After training, adopt the corresponding model paths in `configs/translation/faces32-to-faces256.yaml`. Additionally, we provide weights of pretrained autoencoders for both settings: 
-[Weights 32x32](https://heibox.uni-heidelberg.de/f/b0b103af8406467abe48/);  [Weights256x256](https://heibox.uni-heidelberg.de/f/64f57a9dcbdc480f9178/). 
+[Weights 32x32](https://heibox.uni-heidelberg.de/f/b0b103af8406467abe48/);  [Weights256x256](https://k00.fr/94lw2vlg). 
 To run the training as described above, put them into 
 `logs/2020-10-16T17-11-42_FacesFQ32x32/checkpoints/last.ckpt`and 
 `logs/2020-09-16T16-23-39_FacesXL256z128/checkpoints/last.ckpt`, respectively.
@@ -167,7 +167,7 @@ We provide code and pretrained autoencoder models for three different translatio
 - **Oil-Portrait** ⟷ **Photography**; see `configs/creativity/portraits_photography_256.yaml`
   Download autoencoder checkpoint ([Download Portrait+Photography](https://heibox.uni-heidelberg.de/f/4f9449418a2e4025bb5f/)) and place into `logs/2020-09-29T23-47-10_PortraitsAndFFHQ/checkpoints/epoch=000004.ckpt`.
 - **FFHQ** ⟷ **CelebA-HQ** ⟷ **CelebA**; see `configs/creativity/celeba_celebahq_ffhq_256.yaml`
-  Download autoencoder checkpoint ([Download FFHQ+CelebAHQ+CelebA](https://heibox.uni-heidelberg.de/f/64f57a9dcbdc480f9178/)) and place into `logs/2020-09-16T16-23-39_FacesXL256z128/checkpoints/last.ckpt`. 
+  Download autoencoder checkpoint ([Download FFHQ+CelebAHQ+CelebA](https://k00.fr/94lw2vlg)) and place into `logs/2020-09-16T16-23-39_FacesXL256z128/checkpoints/last.ckpt`. 
   Note that this is the same autoencoder checkpoint as for the stochastic superresolution experiment.
 
 To train a cINN on one of these unpaired transfer tasks using the first GPU, simply run
@@ -248,7 +248,7 @@ COCO with
 python translation.py --base configs/autoencoder/coco256.yaml -t --gpus 0,
 ```
 or [download a pre-trained
-one](https://heibox.uni-heidelberg.de/d/79123d2caef547d29dbe/), and translate
+one](https://k00.fr/fbti4058), and translate
 to it by running
 ```
 python translation.py --base configs/translation/sbert-to-ae-coco256.yaml -t --gpus 0,
